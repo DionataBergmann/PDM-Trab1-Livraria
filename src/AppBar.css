@@ -1,0 +1,17 @@
+span {
+    cursor: pointer;
+  }
+  .botao{
+    margin-left: 500px;
+    margin-right: 200px;
+  }
+
+.navbar{
+  width: auto;
+    
+}
+
+.nav-link{
+    color: white;
+    margin-left: 950px;
+}

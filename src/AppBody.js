@@ -1,22 +1,29 @@
 import React, { useState, useEffect, useRef } from 'react'
-import FormLivros from './FormLivros';
+// import FormLivros from './FormLivros';
 import LineDetail from './LineDetail';
 import SideLivros from './SideLivros';
 import "./table.css";
 import  SearchModal from './SearchModal';
 import DadosModal from './Dados'
+import Conecta from './Conecta';
 
 const AppBody = () => {
   
+  
+  const [livros, setLivros] = useState([]);
   const [lista, setLista] = useState([]);
   const childRef = useRef();
 
-  useEffect(() => {
-    setLista(localStorage.getItem("livros")
-      ? JSON.parse(localStorage.getItem("livros"))
-      : []);
-  }, []); 
+  const getLivros = async () => {
+    const lista = await Conecta.get("livros");
+       console.log(lista);
+    setLivros(lista.data);
+  };
 
+  // define o método que será executado após renderizar o componente
+  useEffect(() => {
+    getLivros();
+  }, []);
   const handleClick = e => {
     
     const tr = e.target.closest("tr");
@@ -25,10 +32,11 @@ const AppBody = () => {
     if (e.target.classList.contains("fa-edit")) {      
      
       const livroAlt = {}
-      livroAlt.titulo = tr.cells[0].innerText;
-      livroAlt.autor = tr.cells[1].innerText;
-      livroAlt.ano = tr.cells[2].innerText;
-      livroAlt.preco = tr.cells[3].innerText;
+      livroAlt.foto = tr.cells[0].innerText;
+      livroAlt.titulo = tr.cells[1].innerText;
+      livroAlt.autor = tr.cells[2].innerText;
+      livroAlt.ano = tr.cells[3].innerText;
+      livroAlt.preco = tr.cells[4].innerText;
       livroAlt.id = id;
 
       childRef.current.onLoadData(livroAlt);
@@ -63,7 +71,7 @@ const [isModalDadosVisible, setIsModalDadosVisible] = useState(false)
       
     
       <div className="col-sm-9 mt-2">
-        <FormLivros atualiza={atualizaLista} lista={lista} ref={childRef}/>
+        {/* <FormLivros atualiza={atualizaLista} lista={lista} ref={childRef}/> */}
 
         <button className="Botao" onClick={() => setIsModalVisible(true)}>Pesquisar</button>
       {isModalVisible ? (
@@ -87,6 +95,7 @@ const [isModalDadosVisible, setIsModalDadosVisible] = useState(false)
           
           <thead>
             <tr>
+              <th>Capa do Livro</th>
               <th>Titulo do Livro</th>
               <th>Autor</th>
               <th>Ano</th>
@@ -96,7 +105,7 @@ const [isModalDadosVisible, setIsModalDadosVisible] = useState(false)
           </thead>
           <tbody >
          
-            {lista.map((livro) => {
+            {livros.map((livro, index) => {
               livro.handleClick = handleClick;
               return (LineDetail(livro));
              

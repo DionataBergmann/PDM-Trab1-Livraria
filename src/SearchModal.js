@@ -1,6 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import {LibraryDetail, LineDetail}  from "./LineDetail";
+import Conecta from "./Conecta";
 
 export const SearchModal = ({id='searchModal', onClose = () => {}, children}) => {
  
@@ -8,9 +9,19 @@ export const SearchModal = ({id='searchModal', onClose = () => {}, children}) =>
     if(e.target.id == id) onClose();
   }
 
-  const livros = localStorage.getItem("livros")
-  ? JSON.parse(localStorage.getItem("livros"))
-  : "";
+  const [livros, setLivros] = useState([]);
+  const [lista, setLista] = useState([]);
+
+  const getLivros = async () => {
+    const lista = await Conecta.get("livros");
+       console.log(lista);
+    setLivros(lista.data);
+  };
+
+  // define o método que será executado após renderizar o componente
+  useEffect(() => {
+    getLivros();
+  }, []);
 
   const [busca, setBusca] = useState('')
 
@@ -41,6 +52,7 @@ return (
           
           <thead>
             <tr>
+              <th>Capa do Livro</th>
               <th>Titulo do Livro</th>
               <th>Autor</th>
               <th>Ano</th>

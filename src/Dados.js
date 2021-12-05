@@ -1,15 +1,23 @@
-
-import React from "react";
-
+import React, { useState, useEffect, useContext } from "react";
+import Conecta from "./Conecta"
 export const DadosModal = ({id='searchModal', onClose = () => {}, children}) => {
  
   const handleOutsideClick = (e) => {
     if(e.target.id == id) onClose();
   }
-
-  const livros = localStorage.getItem("livros")
-  ? JSON.parse(localStorage.getItem("livros"))
-  : "";
+  const [livros, setLivros] = useState([]);
+  
+  const getLivros = async () => {
+    
+      const lista = await Conecta.get("livros");
+      //    console.log(lista);
+      setLivros(lista.data);
+    };
+  
+    // define o método que será executado após renderizar o componente
+    useEffect(() => {
+      getLivros();
+    }, []);
 
 let precos = 0
 let total = 0
